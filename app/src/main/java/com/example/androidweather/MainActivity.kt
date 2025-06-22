@@ -28,12 +28,18 @@ class MainActivity : AppCompatActivity() {
 
         val call = service.getWeatherData()
 
-        fun formatDateTime(inputDateTime: String): String {
+        fun formatDateTime(inputDateTime: String?): String {
+            if (inputDateTime.isNullOrBlank()) return ""
+
             val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm", Locale.getDefault())
             val outputFormat = SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.getDefault())
 
-            val date = inputFormat.parse(inputDateTime)
-            return outputFormat.format(date)
+            return try {
+                val date = inputFormat.parse(inputDateTime)
+                outputFormat.format(date)
+            } catch (ex: Exception) {
+                ""
+            }
         }
 
         call.enqueue(object : Callback<WeatherNow> {
@@ -50,7 +56,7 @@ class MainActivity : AppCompatActivity() {
 
 
                         currentTemperatureTextView.text = tempnow.toString() + "°"
-                        currentDate.text = formatDateTime(timenow.toString())
+                        currentDate.text = formatDateTime(timenow)
                     }
                 }
             }
